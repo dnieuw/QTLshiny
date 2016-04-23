@@ -1,36 +1,44 @@
-library(qtlcharts)
-library(qtl)
-data(hyper)
-library(markdown)
-require(ggplot2)
-require(qtl)      
-
-
-shinyUI(navbarPage("Map construction", inverse = TRUE,
+shinyUI(
+  navbarPage("Map construction", inverse = TRUE, theme = shinytheme("cerulean"),
                    tabPanel("Clean data",
                             sidebarLayout(
                               sidebarPanel(
+                                fileInput('file1', 'Choose file to upload',
+                                          accept = c(
+                                            'text/csv',
+                                            'text/comma-separated-values',
+                                            'text/tab-separated-values',
+                                            'text/plain',
+                                            '.csv',
+                                            '.tsv'
+                                          )),
+                                br(),
                                 selectizeInput('e1',
-                                  label = 'Clean-up data',
-                                  choices = c("Remove duplicates","Filter missing")
-                                )
-                              ),
+                                               label = 'Data exploration',
+                                               choices = c("Remove duplicates","Filter missing")
+                                )),
                               mainPanel(
-                                uiOutput("plot"))
+                                iplotMap_output('plot')
                               )
-                   )
-                   ,
+                   )),
                    tabPanel("Quality plots",
                             renderDataTable("summary")
                    ),
-                   tabPanel("MSTmap",
+                   tabPanel("Genetic map",
                             renderDataTable("summary")
                    ),
-                   tabPanel("Estimate map",
-                            renderDataTable("summary")
-                   ),
-                   tabPanel("KnitPDF",
+                   tabPanel("QTL mapping",
+                            sidebarLayout(
+                              sidebarPanel(
+                               selectizeInput('e2','Interval mapping',
+                                               choices = c("Interval mapping","Stepwise")
+                                ),
+                              htmlOutput("selectUI1")),
+                              mainPanel(
+                                # iplotScanone_output('scanone', width = "100%", height = "580")
+                                plotOutput('scanone')
+                                ))),
+                   tabPanel("PDF report",
                             renderDataTable("summary")
                    )
 ))
-
