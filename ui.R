@@ -20,7 +20,7 @@ shinyUI(
           )
         ),
         mainPanel(
-          iplotMap_output('plot')
+          iplotMap_output('raw_plot')
         )
       )
     ),
@@ -41,8 +41,60 @@ shinyUI(
   		)
     ),
     tabPanel("Genetic map",
-      renderDataTable("summary")
-    ),
+             tabsetPanel(
+               tabPanel("Genetic map",
+                sidebarLayout(
+                  sidebarPanel(
+                    selectInput('mapping',
+                                label = 'Mapping function',
+                                choices = c("kosambi","haldane")
+                             ),
+                    br(),
+                    sliderInput('split',
+                                 label = 'Clustering -log10(P)',
+                             min = 3, max = 10,
+                             value = 6.4, step = 0.1
+                    )
+                   ),
+                  mainPanel(
+                    plotOutput('map_plot')
+                  )
+                )
+               ),
+               tabPanel("Recombination Frequency",
+                 sidebarLayout(
+                   sidebarPanel(
+                     selectInput('mapping',
+                             label = 'Mapping function',
+                              choices = c("kosambi","haldane")
+                            ),
+                            br(),
+                            sliderInput('split',
+                                        label = 'Clustering -log10(P)',
+                                        min = 3, max = 10,
+                                        value = 6.4, step = 0.1
+                            )
+                          ),
+                          mainPanel(
+                            plotOutput('rf_plot')
+                          )
+                        )
+               ),
+               tabPanel("Map QC",
+                        sidebarLayout(
+                          sidebarPanel(
+                            selectizeInput('qcType',
+                                    label = 'Mapping function',
+                                    choices = c("dxo","seg.dist")
+                            )
+                          ),
+                          mainPanel(
+                           plotOutput('qc_plot')
+                          )
+                        )
+                )
+             )
+             ),
     tabPanel("QTL mapping",
       sidebarLayout(
         sidebarPanel(

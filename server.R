@@ -1,5 +1,4 @@
 shinyServer(function(input, output, session) {
-
   geno <- reactive({
 
     inFile <- input$file1
@@ -17,28 +16,59 @@ shinyServer(function(input, output, session) {
   })
 
 
-  output$selectUI1 <- renderUI({ 
+mstmap <- reactive({
+  if (is.null(geno()))
+    return(NULL)
+  mapobject <- mstmap.cross(geno(), bychr = FALSE, dist.fun = input$mapping, 
+                        trace = FALSE, id = "RILs",
+                        p.value = 10^-input$split)
+  names(mapobject$geno) <- paste0("LG",seq_along(mapobject$geno))
+  mapobject
+  })
+  
+## Plot of raw data
+output$raw_plot <- iplotMap_render({
+  if (is.null(geno()))
+    return(NULL)
+  iplotMap(geno())
+})
+
+
+output$rf_plot <- renderPlot({
+  if (is.null(mstmap()))
+    return(NULL)
+  ## A very crappy 'progress 'I am busy' indicator for 5 secs.. 
+  progress <- shiny::Progress$new(session, min=1, max=5)
+  on.exit(progress$close())
+  progress$set(message = 'Calculation in progress')
+  for (i in 1:5) {
+    progress$set(value = i)
+    Sys.sleep(0.5)
+  }
+  rf.cross <- est.rf(mstmap())
+  heatMap(rf.cross)
+})
+
+output$qc_plot <- renderPlot({
+  suppressWarnings(profileMark(mstmap(), stat.type = input$qcType, id =
+              "RILs", type = "a"))
+})
+
+
+
+## Plot of mst ordered data
+output$map_plot <- renderPlot({
+  if (is.null(mstmap()))
+    return(NULL)
+  plotMap(mstmap())
+})
+
+output$selectUI1 <- renderUI({ 
     if (is.null(geno()))
     return(NULL)
     selectInput("trait", "Select trait", names(geno()$pheno))
   })
 
-
-
-  mst <- reactive({
-    inFile <- input$file1
-    if (is.null(inFile))
-    return(NULL)
-    mapobject <- mstmap(geno(), id = "RILs")
-    mapobject
-  })
-
-
-  output$plot <- iplotMap_render({
-    if (is.null(mst()))
-    return(NULL)
-    iplotMap(mst())
-  })
 
   s1 <- reactive({
     if (is.null(geno()))
