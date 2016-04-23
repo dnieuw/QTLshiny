@@ -1,10 +1,10 @@
-require(qtlcharts)
-require(qtl)
-require(markdown)
-require(ggplot2)
-require(qtl)      
-require(ASMap)
-require(shinythemes)
+library(qtlcharts)
+library(qtl)
+library(markdown)
+library(ggplot2)
+library(qtl)      
+library(ASMap)
+library(shinythemes)
 data(hyper)
 
 
