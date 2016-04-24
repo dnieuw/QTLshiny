@@ -11,8 +11,7 @@
 output$scatterplot <- renderPlot({
   data <- cdata()
   plotdata <- data$links %>% as.data.frame
-  plotdata  <- transform(plotdata , chr2 = factor(chr2,
-                                                  levels = mixedsort(plotdata$chr2, decreasing = TRUE) %>% unique))
+  plotdata  <- transform(plotdata , chr2 = factor(chr2, levels = mixedsort(plotdata$chr2, decreasing = TRUE) %>% unique))
   plotdata$po1 <- plotdata$po1 %>% as.character %>% as.numeric
   plotdata$po2 <- plotdata$po2 %>% as.character %>% as.numeric
   p <- ggplot(aes(x = po2, y = po1), data = plotdata)
