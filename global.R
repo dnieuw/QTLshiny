@@ -8,8 +8,10 @@ library(shinythemes)
 library(ggthemes)
 library(ggiraph)
 library(gtools)
+library(shinyIncubator)
 library(dplyr)
 
+source("src/plotMap.R")
 
 
 mydata <- read.cross(format = "csv",
