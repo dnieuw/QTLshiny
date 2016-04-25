@@ -1,5 +1,5 @@
 shinyUI(
-  navbarPage("Map construction", inverse = TRUE, theme = shinytheme("cerulean"),
+  navbarPage("Genetic mapping", inverse = TRUE, theme = shinytheme("cerulean"),
     tabPanel("Clean data",
       sidebarLayout(
         sidebarPanel(
@@ -25,20 +25,29 @@ shinyUI(
       )
     ),
     tabPanel("Quality plots",
-  		tabsetPanel(
-	   		tabPanel("Plot",
-	   			sidebarLayout(
-		        sidebarPanel(
-		          uiOutput("GenPosLG.slider"),
-		          verbatimTextOutput("GenPosLG.slider.output")
-		        ),
-		        mainPanel(
-		        )
-		      )
-	   		),
-	    	tabPanel("Summary"),
-	    	tabPanel("Table")
-  		)
+             tabsetPanel(
+               tabPanel("Genomepostion(bp) versus Centimorgan(cM)",
+                        sidebarLayout(
+                          sidebarPanel(
+                            uiOutput("chromSlider")
+                          ),
+                          mainPanel(
+                            ggiraphOutput("chromFacetPlot", width="100%", height="800px")
+                          )
+                        )
+               ),
+               tabPanel("Genotype Tabel",
+                        sidebarLayout(
+                          sidebarPanel(
+                            
+                          ),
+                          mainPanel(
+                            DT::dataTableOutput("genotable")
+                          )
+                        )
+               ),
+               tabPanel("Table")
+             )
     ),
     tabPanel("Genetic map",
              tabsetPanel(
