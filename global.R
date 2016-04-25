@@ -8,45 +8,18 @@ library(shinythemes)
 library(ggthemes)
 library(ggiraph)
 library(gtools)
+library(shinyIncubator)
 library(dplyr)
-library(DT)
 
-sliderInput.custom <- function(inputId="placeholder", label="placeholder", ticks=TRUE, value=c(0,0), min=0, max=0, custom.ticks=c("placeholder")){
-	args <- list(inputId=inputId, label=label, ticks=ticks, value=value, min=min, max=max)
-	html <- do.call('sliderInput', args)
-	##<MAD HACKS>
-	html$children[[2]]$attribs[['data-values']] <- paste(custom.ticks,collapse=',')
-	##</MAD HACKS>
-	return(html)
-}
+source("src/plotMap.R")
 
-LGChrom.facetplot <- function(posmap, min, max){
-	#expand ranges
-	range <- seq(min+1,max+1,1)
-	#map to chromosome
-	range <- c("1a","1b","2","3","4","5","6","7","8","9","10","11","12")[range]
-
-	plot <- ggplot(filter(posmap,Chrom %in% range),aes(x=GenPos,y=CM, tooltip=LG, data_id=LG))
-	plot <- plot + theme_dark() + facet_grid(LG.map ~ Chrom)
-	plot <- plot + theme(axis.text.x=element_text(angle = 45, vjust=0.5)) + labs(x="GenomePosition(bp)",y="CentiMorgan(cM)")
-	plot <- plot + geom_point_interactive(size=1, col="orange", alpha=0.4)
-	return(plot)
-}
 
 mydata <- read.cross(format = "csv",
-	file = "data/cross.csv" ,
-	genotypes = c("a","h","b"),
-	alleles = c("a","b"),
-	estimate.map = FALSE,
-	BC.gen = 0,
-	F.gen = 6
+           file = "data/cross.csv" ,
+           genotypes = c("a","h","b"),
+           alleles = c("a","b"),
+           estimate.map = FALSE,
+           BC.gen = 0,
+           F.gen = 6
 )
 
-#Genome position mapped to centimorgan file
-posmap <- read.delim("genpos_cm_map.csv", sep=",", stringsAsFactors=F)
-posmap <- transform(posmap , LG.map = factor(LG.map, levels = mixedsort(posmap$LG.map, decreasing = T) %>% unique))
-posmap <- transform(posmap , Chrom = factor(Chrom, levels = mixedsort(posmap$Chrom) %>% unique))
-
-# p <- ggplot(nba.m, aes(variable, Name)) + 
-# geom_tile(aes(fill = rescale), colour = "white") + 
-# scale_fill_gradient(low = "white", high = "steelblue"))
