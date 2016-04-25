@@ -30,11 +30,12 @@ sliderInput.custom <- function(inputId="placeholder", label="placeholder", ticks
   return(html)
 }
 
-LGChrom.facetplot <- function(posmap, min, max){
+LGChrom.facetplot <- function(posmap, min, max, cross){
   #expand ranges
   range <- seq(min+1,max+1,1)
   #map to chromosome
-  range <- c("1a","1b","2","3","4","5","6","7","8","9","10","11","12")[range]
+  # range <- c("1a","1b","2","3","4","5","6","7","8","9","10","11","12")[range]
+  range <- names(cross$geno)[range]
   
   plot <- ggplot(filter(posmap,Chrom %in% range),aes(x=(GenPos/10^6) %>% round(digits = 0),y=CM, tooltip=LG, data_id=LG))
   plot <- plot + theme_dark() + facet_grid(LG.map ~ Chrom)

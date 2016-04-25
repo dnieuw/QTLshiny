@@ -58,8 +58,9 @@ output$qc_plot <- renderPlot({
 
 ## Plot of mst ordered data
 output$map_plot <- renderPlot({
-  if (is.null(mstmap()))
-    return(NULL)
+  validate(
+    need(input$file1 != "", "Please upload a cross file")
+  )
   plotMap(mstmap())
 })
 
@@ -69,25 +70,18 @@ output$selectUI1 <- renderUI({
     selectInput("trait", "Select trait", names(geno()$pheno))
   })
 
-
   s1 <- reactive({
     if (is.null(geno()))
     return(NULL)
     scanone(geno(), pheno.col = which(names(geno()$pheno)==input$trait))
   })
 
-  # output$scanone <- iplotScanone_render({
-  #   if (is.null(geno()))
-  #     return(NULL)
-  # iplotScanone(s1())
-  # })
-
   output$scanone <- renderPlot({
-    if (is.null(geno()))
-    return(NULL)
+    validate(
+      need(input$file1 != "", "Please upload a cross file")
+    )
     plot(s1())
   })
-
 
   output$chromSlider <- renderUI({
     sliderInput.custom(inputId="chromInput", label="Chromosome :", value=c(2,4), min=0, max=13, custom.ticks=c("1a","1b","2","3","4","5","6","7","8","9","10","11","12"))
@@ -96,17 +90,20 @@ output$selectUI1 <- renderUI({
   output$chromInput <- renderPrint({input$chromInput})
   
   output$chromFacetPlot <- renderggiraph({
+    validate(
+      need(input$file1 != "", "Please upload a cross file")
+    )
     min <- as.numeric(input$chromInput[1])
     max <- as.numeric(input$chromInput[2])
-    plot <- LGChrom.facetplot(posmap,min,max)
+    plot <- LGChrom.facetplot(posmap,min,max, cross = geno())
     ggiraph(code = {print(plot)}, zoom_max = 2, tooltip_offx = 20, tooltip_offy = -10, hover_css = "fill:black;stroke-width:1px;stroke:wheat;cursor:pointer;alpha:1;")
   })
   
   
-  alleleTable <- reactive({
-    inFile <- input$file1
-    if (is.null(inFile))
-      return(NULL)
+alleleTable <- reactive({
+  validate(
+    need(input$file1 != "", "Please upload a cross file")
+  )
     table <- geno()$geno$"1a"$data
     table[is.na(table)] <- "NA"
     table[which(table==1)] <- "A"
@@ -119,8 +116,8 @@ output$selectUI1 <- renderUI({
   output$genotable <- DT::renderDataTable(DT::datatable(alleleTable()) %>% 
                                             formatStyle(colnames(alleleTable()),
                                                         fontWeight = 'bold',
-                                                        backgroundColor = styleEqual(c("Allele A","Homozygote","Allele B","NA"),c("#004CC7","#008A05","#C70D00","#737373")),#BLUE,GREEN,RED,GRAY
-                                                        color = styleEqual(c("Allele A","Homozygote","Allele B","NA"),c("black","black","black","white"))
+                                                        backgroundColor = styleEqual(c("A","H","B","NA"),c("#004CC7","#008A05","#C70D00","#737373")),#BLUE,GREEN,RED,GRAY
+                                                        color = styleEqual(c("A","H","B","NA"),c("black","black","black","white"))
                                             )
   )
 })

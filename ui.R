@@ -1,30 +1,17 @@
 shinyUI(
-  navbarPage("Genetic mapping", inverse = TRUE, theme = shinytheme("cerulean"),
-    tabPanel("Clean data",
+  navbarPage("", inverse = TRUE, theme = shinytheme("cerulean"),
+    tabPanel(div(h3("Upload data")),
       sidebarLayout(
         sidebarPanel(
-          fileInput('file1', 'Choose file to upload',
-            accept = c(
-              'text/csv',
-              'text/comma-separated-values',
-              'text/tab-separated-values',
-              'text/plain',
-              '.csv',
-              '.tsv'
-            )
-          ),
-          br(),
-          selectizeInput('e1',
-            label = 'Data exploration',
-            choices = c("Remove duplicates","Filter missing")
-          )
+          fileInput('file1', 'Upload a cross file',
+            accept = '.csv')
         ),
         mainPanel(
           iplotMap_output('raw_plot')
         )
       )
     ),
-    tabPanel("Quality plots",
+    tabPanel(div(h3("Quality plots")),
              tabsetPanel(
                tabPanel("Genomepostion(bp) versus Centimorgan(cM)",
                         sidebarLayout(
@@ -49,7 +36,7 @@ shinyUI(
                tabPanel("Table")
              )
     ),
-    tabPanel("Genetic map",
+    tabPanel(div(h3("Genetic map")),
              tabsetPanel(
                tabPanel("Genetic map",
                 sidebarLayout(
@@ -104,7 +91,7 @@ shinyUI(
                 )
              )
              ),
-    tabPanel("QTL mapping",
+    tabPanel(div(h3("QTL mapping")),
       sidebarLayout(
         sidebarPanel(
           selectizeInput('e2','Interval mapping',
@@ -118,8 +105,10 @@ shinyUI(
         )
       )
     ),
-    tabPanel("PDF report",
-      renderDataTable("summary")
+    tabPanel(div(h3("About")),
+             mainPanel(
+               includeMarkdown("about.Rmd")   
+             )
+    )
     )
   )
-)
