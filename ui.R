@@ -26,7 +26,8 @@ shinyUI(
                tabPanel("Genotype Tabel",
                         sidebarLayout(
                           sidebarPanel(
-                            
+                            uiOutput("chromSelect"),
+                            uiOutput("markerSelect")
                           ),
                           mainPanel(
                             DT::dataTableOutput("genotable")
